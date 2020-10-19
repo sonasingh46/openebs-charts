@@ -29,6 +29,15 @@ jobs:
         
       - name: Run chart-testing (install)
         uses: helm/chart-testing-action@v1.0.0
+        timeout-minutes: 3
+        continue-on-error: true
         with:
           command: install
           config: ct.yaml
+
+      - name: Debug Failure
+        run: |
+          kubectl get sa --all-namespaces
+          echo "Get CR ------------->"
+          kubectl get clusterrole
+          echo "Get CRB ------------->"

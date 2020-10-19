@@ -131,7 +131,7 @@ ndmOperator:
 webhook:
   enabled: true
   image: "openebs/admission-server"
-  imageTag: "2.0.0"
+  imageTag: "2.1.0"
   failurePolicy: "Fail"
   replicas: 1
   healthCheck:
