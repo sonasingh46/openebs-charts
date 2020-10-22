@@ -14,20 +14,30 @@ jobs:
 
       - name: Run chart-testing (lint)
         id: lint
-        uses: helm/chart-testing-action@v1.0.0-rc.2
+        uses: helm/chart-testing-action@v1.0.0
         with:
           command: lint
           config: ct.yaml
 
       - name: Create kind cluster
-        uses: helm/kind-action@v1.0.0-rc.1
-        with:
-          installLocalPathProvisioner: true
+        uses: helm/kind-action@v1.0.0
         # Only build a kind cluster if there are chart changes to test.
         if: steps.lint.outputs.changed == 'true'
-
+        # This is a temp hack. See https://github.com/helm/helm/issues/8036
+      - name: Add dependecies 
+        run: helm repo add openebs-ndm https://sonasingh46.github.io/ndm-charts/
+        
       - name: Run chart-testing (install)
-        uses: helm/chart-testing-action@v1.0.0-rc.2
+        uses: helm/chart-testing-action@v1.0.0
+        timeout-minutes: 3
+        continue-on-error: true
         with:
           command: install
           config: ct.yaml
+
+      - name: Debug Failure
+        run: |
+          kubectl get sa --all-namespaces
+          echo "Get CR ------------->"
+          kubectl get clusterrole
+          echo "Get CRB ------------->"
